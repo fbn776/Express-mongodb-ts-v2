@@ -1,0 +1,1 @@
+Hi {{name}}, your booking at {{hotel}} is confirmed for {{date}}. 🎉

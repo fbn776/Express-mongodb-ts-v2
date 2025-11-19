@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  main_db:
+    image: mongo
+    container_name: main_db
+    ports:
+      - $MONGODB_MACHINE_PORT:$MONGODB_PORT
+    volumes:
+      - main-db-volume:/data/db
+    networks:
+      - main_network
+    restart: unless-stopped
+
+  main_server:
+    depends_on:
+      - main_db
+    build: ./app
+    container_name: main_server
+    restart: unless-stopped
+    env_file: ./.env
+    ports:
+      - $NODE_MACHINE_PORT:$NODE_PORT
+    stdin_open: true
+    tty: true
+    volumes:
+      - main-server-volume:/app/uploads
+    networks:
+      - main_network
+
+volumes:
+  main-db-volume:
+  main-server-volume:
+
+networks:
+  main_network:
+    name: main_network
+    driver: bridge

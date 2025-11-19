@@ -1,0 +1,1 @@
+Hello {{name}}, we're excited to host you at {{hotel}} on {{date}}. See you soon!

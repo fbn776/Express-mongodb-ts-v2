@@ -1,0 +1,1 @@
+Hey {{name}}, your stay at {{hotel}} is booked for {{date}}. Safe travels! ✈️

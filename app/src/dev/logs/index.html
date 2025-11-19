@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Viewer</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<div class="header">
+    <h1>Log Viewer</h1>
+    <div class="controls">
+        <div class="connection-status disconnected" id="connectionStatus">
+            <div class="status-dot"></div>
+            <span>Disconnected</span>
+        </div>
+        <button class="btn" onclick="clearLogs()">Clear Logs</button>
+        <button class="btn" onclick="reconnect()">Reconnect</button>
+    </div>
+</div>
+
+<div class="log-container" id="logContainer">
+    <div class="no-logs" id="noLogs">Waiting for logs...</div>
+</div>
+<script src="./script.js"></script>
+</body>
+</html>

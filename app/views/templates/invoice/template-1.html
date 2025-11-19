@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice #{{invoice_number}}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 14px;
+            line-height: 1.4;
+            color: #333;
+            background: white;
+        }
+
+        .invoice-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+            background: white;
+        }
+
+        /* Header */
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #0B1215;
+            padding-bottom: 20px;
+        }
+
+        .company-info h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0B1215;
+            margin-bottom: 10px;
+        }
+
+        .company-info p {
+            margin: 2px 0;
+            color: #666;
+        }
+
+        .invoice-meta {
+            text-align: right;
+        }
+
+        .invoice-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #0B1215;
+            margin-bottom: 10px;
+        }
+
+        .invoice-meta p {
+            margin: 5px 0;
+        }
+
+        .invoice-number {
+            font-weight: 600;
+            color: #0B1215;
+        }
+
+        /* Bill To / Ship To Section */
+        .billing-section {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+
+        .billing-info, .shipping-info {
+            width: 48%;
+        }
+
+        .billing-info h3, .shipping-info h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #0B1215;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+
+        .billing-info p, .shipping-info p {
+            margin: 3px 0;
+        }
+
+        /* Items Table */
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        .items-table th {
+            background-color: #0B1215;
+            color: white;
+            padding: 12px 8px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .items-table th:last-child,
+        .items-table td:last-child {
+            text-align: right;
+        }
+
+        .items-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .items-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .item-description {
+            color: #666;
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        /* Summary Section */
+        .invoice-summary {
+            width: 300px;
+            margin-left: auto;
+            margin-bottom: 30px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+            border-top: 2px solid #0B1215;
+            padding-top: 10px;
+            font-weight: 700;
+            font-size: 16px;
+            color: #0B1215;
+        }
+
+        .summary-label {
+            font-weight: 500;
+        }
+
+        .summary-value {
+            font-weight: 600;
+        }
+
+        /* Payment & Terms */
+        .payment-terms {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .payment-info, .terms-info {
+            width: 48%;
+        }
+
+        .payment-info h4, .terms-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #0B1215;
+            margin-bottom: 8px;
+        }
+
+        .payment-info p, .terms-info p {
+            margin: 3px 0;
+            font-size: 13px;
+        }
+
+        /* Notes */
+        .invoice-notes {
+            margin-bottom: 30px;
+        }
+
+        .invoice-notes h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #0B1215;
+            margin-bottom: 8px;
+        }
+
+        .invoice-notes p {
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* Footer */
+        .invoice-footer {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+            font-size: 12px;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-paid {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-overdue {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-draft {
+            background-color: #e2e3e5;
+            color: #383d41;
+        }
+
+        /* Print Styles */
+        @media print {
+            .invoice-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <!-- Header -->
+        <div class="invoice-header">
+            <div class="company-info">
+                <h1>{{company_name}}</h1>
+                <p>{{company_address_line1}}</p>
+                {{#if company_address_line2}}<p>{{company_address_line2}}</p>{{/if}}
+                <p>{{company_city}}, {{company_state}} {{company_zip}}</p>
+                {{#if company_country}}<p>{{company_country}}</p>{{/if}}
+                {{#if company_phone}}<p>Phone: {{company_phone}}</p>{{/if}}
+                {{#if company_email}}<p>Email: {{company_email}}</p>{{/if}}
+                {{#if company_website}}<p>Website: {{company_website}}</p>{{/if}}
+                {{#if tax_id}}<p>Tax ID: {{tax_id}}</p>{{/if}}
+            </div>
+            <div class="invoice-meta">
+                <div class="invoice-title">INVOICE</div>
+                <p class="invoice-number"># {{invoice_number}}</p>
+                <p><strong>Date:</strong> {{invoice_date}}</p>
+                <p><strong>Due Date:</strong> {{due_date}}</p>
+                {{#if po_number}}<p><strong>PO Number:</strong> {{po_number}}</p>{{/if}}
+                {{#if status}}<p><span class="status-badge status-{{status}}">{{status}}</span></p>{{/if}}
+            </div>
+        </div>
+
+        <!-- Bill To / Ship To -->
+        <div class="billing-section">
+            <div class="billing-info">
+                <h3>Bill To:</h3>
+                <p><strong>{{bill_to_name}}</strong></p>
+                {{#if bill_to_company}}<p>{{bill_to_company}}</p>{{/if}}
+                <p>{{bill_to_address_line1}}</p>
+                {{#if bill_to_address_line2}}<p>{{bill_to_address_line2}}</p>{{/if}}
+                <p>{{bill_to_city}}, {{bill_to_state}} {{bill_to_zip}}</p>
+                {{#if bill_to_country}}<p>{{bill_to_country}}</p>{{/if}}
+                {{#if bill_to_phone}}<p>Phone: {{bill_to_phone}}</p>{{/if}}
+                {{#if bill_to_email}}<p>Email: {{bill_to_email}}</p>{{/if}}
+                {{#if bill_to_tax_id}}<p>Tax ID: {{bill_to_tax_id}}</p>{{/if}}
+            </div>
+            
+            {{#if ship_to_name}}
+            <div class="shipping-info">
+                <h3>Ship To:</h3>
+                <p><strong>{{ship_to_name}}</strong></p>
+                {{#if ship_to_company}}<p>{{ship_to_company}}</p>{{/if}}
+                <p>{{ship_to_address_line1}}</p>
+                {{#if ship_to_address_line2}}<p>{{ship_to_address_line2}}</p>{{/if}}
+                <p>{{ship_to_city}}, {{ship_to_state}} {{ship_to_zip}}</p>
+                {{#if ship_to_country}}<p>{{ship_to_country}}</p>{{/if}}
+                {{#if ship_to_phone}}<p>Phone: {{ship_to_phone}}</p>{{/if}}
+            </div>
+            {{/if}}
+        </div>
+
+        <!-- Items Table -->
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th style="width: 80px;">Qty</th>
+                    <th style="width: 100px;">Unit Price</th>
+                    {{#if show_discount}}<th style="width: 80px;">Discount</th>{{/if}}
+                    <th style="width: 100px;">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each items}}
+                <tr>
+                    <td>
+                        <strong>{{name}}</strong>
+                        {{#if description}}<div class="item-description">{{description}}</div>{{/if}}
+                        {{#if sku}}<div class="item-description">SKU: {{sku}}</div>{{/if}}
+                    </td>
+                    <td>{{quantity}}{{#if unit}} {{unit}}{{/if}}</td>
+                    <td>{{currency}}{{unit_price}}</td>
+                    {{#if ../show_discount}}<td>{{#if discount}}{{discount}}{{#if discount_type}}{{#if (eq discount_type 'percentage')}}%{{/if}}{{/if}}{{else}}-{{/if}}</td>{{/if}}
+                    <td>{{currency}}{{total}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+
+        <!-- Summary -->
+        <div class="invoice-summary">
+            <div class="summary-row">
+                <span class="summary-label">Subtotal:</span>
+                <span class="summary-value">{{currency}}{{subtotal}}</span>
+            </div>
+            
+            {{#if discount_amount}}
+            <div class="summary-row">
+                <span class="summary-label">Discount:</span>
+                <span class="summary-value">-{{currency}}{{discount_amount}}</span>
+            </div>
+            {{/if}}
+            
+            {{#if shipping_amount}}
+            <div class="summary-row">
+                <span class="summary-label">Shipping:</span>
+                <span class="summary-value">{{currency}}{{shipping_amount}}</span>
+            </div>
+            {{/if}}
+            
+            {{#each taxes}}
+            <div class="summary-row">
+                <span class="summary-label">{{name}} ({{rate}}%):</span>
+                <span class="summary-value">{{currency}}{{amount}}</span>
+            </div>
+            {{/each}}
+            
+            {{#if adjustment_amount}}
+            <div class="summary-row">
+                <span class="summary-label">{{adjustment_label}}:</span>
+                <span class="summary-value">{{#if (gt adjustment_amount 0)}}+{{/if}}{{currency}}{{adjustment_amount}}</span>
+            </div>
+            {{/if}}
+            
+            <div class="summary-row">
+                <span class="summary-label">Total Amount:</span>
+                <span class="summary-value">{{currency}}{{total_amount}}</span>
+            </div>
+            
+            {{#if amount_paid}}
+            <div class="summary-row">
+                <span class="summary-label">Amount Paid:</span>
+                <span class="summary-value">-{{currency}}{{amount_paid}}</span>
+            </div>
+            <div class="summary-row">
+                <span class="summary-label">Balance Due:</span>
+                <span class="summary-value">{{currency}}{{balance_due}}</span>
+            </div>
+            {{/if}}
+        </div>
+
+        <!-- Payment & Terms -->
+        <div class="payment-terms">
+            {{#if payment_method}}
+            <div class="payment-info">
+                <h4>Payment Information</h4>
+                <p><strong>Method:</strong> {{payment_method}}</p>
+                {{#if payment_terms}}<p><strong>Terms:</strong> {{payment_terms}}</p>{{/if}}
+                {{#if bank_name}}<p><strong>Bank:</strong> {{bank_name}}</p>{{/if}}
+                {{#if account_number}}<p><strong>Account:</strong> {{account_number}}</p>{{/if}}
+                {{#if routing_number}}<p><strong>Routing:</strong> {{routing_number}}</p>{{/if}}
+                {{#if iban}}<p><strong>IBAN:</strong> {{iban}}</p>{{/if}}
+                {{#if swift_code}}<p><strong>SWIFT:</strong> {{swift_code}}</p>{{/if}}
+            </div>
+            {{/if}}
+            
+            <div class="terms-info">
+                <h4>Terms & Conditions</h4>
+                {{#if late_fee}}<p>Late Fee: {{late_fee}}</p>{{/if}}
+                {{#if payment_terms}}<p>Payment Terms: {{payment_terms}}</p>{{/if}}
+                {{#if warranty}}<p>Warranty: {{warranty}}</p>{{/if}}
+                {{#each terms}}
+                <p>{{this}}</p>
+                {{/each}}
+            </div>
+        </div>
+
+        <!-- Notes -->
+        {{#if notes}}
+        <div class="invoice-notes">
+            <h4>Notes</h4>
+            <p>{{notes}}</p>
+        </div>
+        {{/if}}
+
+        <!-- Footer -->
+        <div class="invoice-footer">
+            <p>{{#if footer_text}}{{footer_text}}{{else}}Thank you for your business!{{/if}}</p>
+            {{#if generated_on}}<p>Generated on {{generated_on}}</p>{{/if}}
+        </div>
+    </div>
+</body>
+</html>
