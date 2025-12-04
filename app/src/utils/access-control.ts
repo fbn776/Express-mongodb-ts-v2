@@ -25,13 +25,7 @@ export async function accessControl(access_types: string, req: Request, res: Res
                     } else {
                         //@ts-ignore
                         let user = await Users.findById(decoded.id)
-                            .populate('type', '-__v -createdAt -updatedAt -deletedAt -added_by -updated_by -deleted_by')
-                            .populate('company', '-__v -createdAt -updatedAt -deletedAt -added_by -updated_by -deleted_by')
-                            .populate({
-                                path: "subscription",
-                                populate: { path: "plan_type" },
-                                select: '-__v -createdAt -updatedAt -deletedAt -added_by -updated_by -deleted_by'
-                            });
+                            .populate('type', '-__v -createdAt -updatedAt -deletedAt -added_by -updated_by -deleted_by');
 
                         // @ts-ignore
                         if (!user?.type?.type_id) {

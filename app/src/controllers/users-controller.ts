@@ -32,13 +32,7 @@ export const fetchProfile = async function (req: Request, res: Response) {
             _id: req!.user!._id,
         })
             .select('-secrets')
-            .populate('company')
-            .populate('type', '-deleted -__v')
-            .populate({
-                path: "subscription",
-                populate: {path: "plan_type"},
-                select: '-__v -createdAt -updatedAt -deletedAt -added_by -updated_by -deleted_by'
-            });
+            .populate('type', '-deleted -__v');
 
         if (user) {
             let response = success_function({"status": 200, data: user});
@@ -170,10 +164,10 @@ export async function sendOtp(req: Request, res: Response) {
                 }
             };
         }
-
-        if (user.profile_verified) {
-            return res.status(400).send(error_function({status: 400, message: "Profile already verified"}));
-        }
+        //
+        // if (user.profile_verified) {
+        //     return res.status(400).send(error_function({status: 400, message: "Profile already verified"}));
+        // }
 
         if (user!.secrets!.otp && user!.secrets!.otp.resent_after && new Date() < user.secrets.otp.resent_after) {
             return res.status(429).send(error_function({
