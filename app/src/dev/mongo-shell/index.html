@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mongo Dev Shell</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+    <!-- CodeMirror -->
+    <link rel="stylesheet" href="./libs/codemirror.min.css">
+    <link rel="stylesheet" href="./libs/dracula.min.css">
+    <script src="./libs/codemirror.min.js"></script>
+    <script src="./libs/javascript.min.js"></script>
+    <script src="./libs/matchbrackets.min.js"></script>
+    <script src="./libs/closebrackets.min.js"></script>
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>History</h2>
+                <button id="clear-history" class="icon-btn" title="Clear History">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                </button>
+            </div>
+            <div id="history-list" class="history-list">
+                <!-- History items will be injected here -->
+                <div class="empty-state">No history yet</div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>Mongo Dev Shell</h1>
+                <div class="connection-status">
+                    <span class="status-indicator" id="status-indicator"></span>
+                    <span id="status-text">Ready</span>
+                </div>
+            </header>
+
+            <div class="workspace">
+                <div class="query-panel">
+                    <form id="query-form">
+                        <div class="form-group url-group">
+                            <label for="api-url">API Endpoint</label>
+                            <input type="text" id="api-url" value="/dev/mongo-shell" placeholder="/dev/mongo-shell">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group flex-1">
+                                <label for="model">Model Name</label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="model" list="model-list" placeholder="e.g. User, Order"
+                                        required autocomplete="off">
+                                    <datalist id="model-list"></datalist>
+                                </div>
+                            </div>
+                            <div class="form-group flex-1">
+                                <label for="command">Command</label>
+                                <div class="command-input-wrapper">
+                                    <input type="text" id="command" list="command-list" placeholder="find" required
+                                        autocomplete="off">
+                                    <datalist id="command-list">
+                                        <option value="find">
+                                        <option value="findOne">
+                                        <option value="findById">
+                                        <option value="create">
+                                        <option value="updateOne">
+                                        <option value="updateMany">
+                                        <option value="deleteOne">
+                                        <option value="deleteMany">
+                                        <option value="countDocuments">
+                                        <option value="aggregate">
+                                        <option value="distinct">
+                                        <option value="collection.drop">
+                                    </datalist>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="args">Arguments (JSON Array)</label>
+                            <div class="editor-container">
+                                <textarea id="args" placeholder='[{}, {"limit": 10}]' spellcheck="false"></textarea>
+                            </div>
+                            <div class="help-text">Enter arguments as a JSON array. Example: [{"name": "John"}]</div>
+                        </div>
+
+                        <div class="action-bar">
+                            <button type="submit" class="btn btn-primary" id="execute-btn">
+                                <span class="btn-text">Execute</span>
+                                <div class="spinner"></div>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="results-panel">
+                    <div class="panel-header">
+                        <h3>Response</h3>
+                        <div class="panel-actions">
+                            <span id="execution-time" class="meta-info"></span>
+                            <span id="result-count" class="meta-info"></span>
+                            <button id="copy-btn" class="btn btn-sm btn-secondary">Copy</button>
+                        </div>
+                    </div>
+                    <div class="results-viewer">
+                        <pre><code id="json-output"></code></pre>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+
+</html>

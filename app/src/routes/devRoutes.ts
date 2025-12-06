@@ -98,6 +98,15 @@ devRouter.post("/dev/all-env", devOnlyMiddleware, async (req, res) => {
     }
 });
 
+devRouter.get('/dev/mongo-shell/models', devOnlyMiddleware, (req, res) => {
+    const modelNames = mongoose.modelNames();
+
+    res.json({
+        success: true,
+        models: modelNames
+    });
+});
+
 /**
  * Execute arbitrary mongoose model commands.
  * For example, to find all users:
@@ -115,7 +124,6 @@ devRouter.post("/dev/all-env", devOnlyMiddleware, async (req, res) => {
  *   "args": []
  * }
  */
-
 devRouter.post("/dev/mongo-shell", devOnlyMiddleware, async (req, res) => {
     const {model, command, args} = req.body;
 
